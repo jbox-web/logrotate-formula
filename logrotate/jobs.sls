@@ -12,16 +12,18 @@ logrotate-{{ key }}:
   file.managed:
   {% if 'hourly' in (contents or value.config) %}
     - name: {{ logrotate.hourly_include_dir }}/{{ key.split("/")[-1] }}
-    - require:
-      - file: {{ logrotate.hourly_include_dir }}
   {% else %}
     - name: {{ logrotate.include_dir }}/{{ key.split("/")[-1] }}
   {% endif %}
     - user: {{ salt['pillar.get']('logrotate:config:user', logrotate.user) }}
     - group: {{ salt['pillar.get']('logrotate:config:group', logrotate.group) }}
     - mode: {{ salt['pillar.get']('logrotate:config:mode', '644') }}
+    {#- One require list: a second `require` key replaced the first one #}
     - require:
       - pkg: logrotate-pkg
+  {% if 'hourly' in (contents or value.config) %}
+      - file: {{ logrotate.hourly_include_dir }}
+  {% endif %}
     {% if contents %}
     - contents: {{ contents | yaml_encode }}
     {% else %}

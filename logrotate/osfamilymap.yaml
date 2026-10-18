@@ -6,6 +6,8 @@ Arch:
   default_config:
     tabooext: + .pacorig .pacnew .pacsave
 Debian:
+  # Debian schedules logrotate with a systemd timer, not from cron
+  service: logrotate.timer
   login_records_jobs: false
   default_config:
     compress: true
